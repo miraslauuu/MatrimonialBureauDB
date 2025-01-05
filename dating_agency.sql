@@ -670,3 +670,40 @@ END;
 SELECT * FROM LogOperacji;
 
 /
+
+/************************************************************
+      ROLE 
+     ************************************************************/
+
+--  Administrator (dowolne uprawnienia)
+CREATE ROLE Administrator;
+
+GRANT ALL ON KlienciObjTable TO Administrator;
+GRANT ALL ON RandkiObjTable TO Administrator;
+GRANT ALL ON OpiekunowieObjTable TO Administrator;
+GRANT ALL ON podopieczni_storage TO Administrator;
+GRANT ALL ON LogOperacji TO Administrator;
+GRANT EXECUTE ON PakietBiuro TO Administrator;
+
+GRANT CREATE ANY TABLE TO Administrator;
+GRANT DROP ANY TABLE TO Administrator;
+GRANT CREATE USER TO Administrator;
+GRANT DROP USER TO Administrator;
+GRANT GRANT ANY PRIVILEGE TO Administrator;
+
+--Employee (Brak możliwości usuwania danych i modyfikowania struktur bazy)
+CREATE ROLE Employee;
+
+
+GRANT SELECT, INSERT, UPDATE ON KlienciObjTable TO Employee;
+GRANT SELECT, INSERT ON RandkiObjTable TO Employee;
+GRANT SELECT ON OpiekunowieObjTable TO Employee;
+GRANT EXECUTE ON PakietBiuro TO Employee;
+
+-- Tworzenie użytkownika admin i emp
+CREATE USER admin IDENTIFIED BY admin_password;
+GRANT Administrator TO admin;
+
+CREATE USER employee IDENTIFIED BY employee_password;
+GRANT Employee TO employee;
+
