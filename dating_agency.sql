@@ -4,7 +4,7 @@
 SET SERVEROUTPUT ON; 
 
     /************************************************************
-      Definicje Typów i Ciał
+      Definicje Typ?w i Cia?
      ************************************************************/
      
 -- Definicja TypAdres
@@ -48,7 +48,7 @@ CREATE OR REPLACE TYPE BODY TypOsoba AS
     MEMBER PROCEDURE pokaz_dane IS
     BEGIN
         DBMS_OUTPUT.PUT_LINE('Osoba ID: ' || osoba_id);
-        DBMS_OUTPUT.PUT_LINE('Imię i nazwisko: ' || imie || ' ' || nazwisko);
+        DBMS_OUTPUT.PUT_LINE('Imi? i nazwisko: ' || imie || ' ' || nazwisko);
         DBMS_OUTPUT.PUT_LINE('Data urodzenia: ' || TO_CHAR(data_urodzenia, 'YYYY-MM-DD'));
         DBMS_OUTPUT.PUT_LINE('Adres: ' || adres.pokaz_adres());
     END pokaz_dane;
@@ -145,10 +145,15 @@ RETURN AS LOCATOR;
 ALTER TABLE podopieczni_storage
 ADD CONSTRAINT pk_podopieczni PRIMARY KEY (NESTED_TABLE_ID);
 
+ALTER TABLE RandkiObjTable
+    ADD SCOPE FOR (klient1_ref) IS KlienciObjTable;
+
+ALTER TABLE RandkiObjTable
+    ADD SCOPE FOR (klient2_ref) IS KlienciObjTable;
 
 /
     /************************************************************
-      Tworzenie Pakietów (implementacha logiki biznesowej)
+      Tworzenie Pakiet?w (implementacha logiki biznesowej)
      ************************************************************/
 CREATE OR REPLACE PACKAGE PakietBiuro AS
     
@@ -205,7 +210,7 @@ END PakietBiuro;
 CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
 
     /************************************************************
-      1) OBSŁUGA KLIENTÓW
+      1) OBS?UGA KLIENT?W
      ************************************************************/
     PROCEDURE dodaj_klienta(
         p_osoba_id       NUMBER,
@@ -236,9 +241,9 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
         DBMS_OUTPUT.PUT_LINE('Dodano nowego klienta o ID=' || p_osoba_id);
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd: Klient o ID='||p_osoba_id||' już istnieje!');
+            DBMS_OUTPUT.PUT_LINE('B??d: Klient o ID='||p_osoba_id||' ju? istnieje!');
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd (dodaj_klienta): ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('B??d (dodaj_klienta): ' || SQLERRM);
     END dodaj_klienta;
 
 
@@ -258,7 +263,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
         WHEN NO_DATA_FOUND THEN
             DBMS_OUTPUT.PUT_LINE('Brak klienta o ID=' || p_osoba_id);
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd (wyswietl_klienta): ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('B??d (wyswietl_klienta): ' || SQLERRM);
     END wyswietl_klienta;
 
 
@@ -275,7 +280,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
 
 
     /************************************************************
-      2) OBSŁUGA OPIEKUNÓW
+      2) OBS?UGA OPIEKUN?W
      ************************************************************/
     PROCEDURE dodaj_opiekuna(
         p_opiekun_id NUMBER,
@@ -296,9 +301,9 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
         DBMS_OUTPUT.PUT_LINE('Dodano nowego opiekuna o ID=' || p_opiekun_id);
     EXCEPTION
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd: Opiekun o ID='||p_opiekun_id||' już istnieje!');
+            DBMS_OUTPUT.PUT_LINE('B??d: Opiekun o ID='||p_opiekun_id||' ju? istnieje!');
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd (dodaj_opiekuna): ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('B??d (dodaj_opiekuna): ' || SQLERRM);
     END dodaj_opiekuna;
 
 
@@ -335,7 +340,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
         WHEN NO_DATA_FOUND THEN
             DBMS_OUTPUT.PUT_LINE('Brak opiekuna lub klienta o podanym ID!');
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd (dodaj_klienta_do_opiekuna): ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('B??d (dodaj_klienta_do_opiekuna): ' || SQLERRM);
     END dodaj_klienta_do_opiekuna;
 
 
@@ -351,7 +356,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
 
 
     /************************************************************
-      3) OBSŁUGA RANDKI
+      3) OBS?UGA RANDKI
      ************************************************************/
     PROCEDURE dodaj_randke(
         p_randka_id      NUMBER,
@@ -374,7 +379,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
         WHERE k.osoba_id = p_klient2_id;
 
         IF p_data_spotkania < SYSDATE THEN
-            RAISE_APPLICATION_ERROR(-20003, 'Data spotkania nie może być w przeszłości!');
+            RAISE_APPLICATION_ERROR(-20003, 'Data spotkania nie mo?e by? w przesz?o?ci!');
         END IF;
         
         INSERT INTO RandkiObjTable
@@ -387,15 +392,15 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
                 v_kl2
             )
         );
-        DBMS_OUTPUT.PUT_LINE('Dodano randkę o ID=' || p_randka_id);
+        DBMS_OUTPUT.PUT_LINE('Dodano randk? o ID=' || p_randka_id);
 
     EXCEPTION
         WHEN NO_DATA_FOUND THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd: nie znaleziono jednego z klientów!');
+            DBMS_OUTPUT.PUT_LINE('B??d: nie znaleziono jednego z klient?w!');
         WHEN DUP_VAL_ON_INDEX THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd: Randka o ID='||p_randka_id||' już istnieje!');
+            DBMS_OUTPUT.PUT_LINE('B??d: Randka o ID='||p_randka_id||' ju? istnieje!');
         WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Błąd (dodaj_randke): ' || SQLERRM);
+            DBMS_OUTPUT.PUT_LINE('B??d (dodaj_randke): ' || SQLERRM);
     END dodaj_randke;
 
 
@@ -411,7 +416,7 @@ CREATE OR REPLACE PACKAGE BODY PakietBiuro AS
 END PakietBiuro;
 /
     /************************************************************
-      Obsługa bazy obiektowej (triggery, procedury, obsługa błędów i inne)
+      Obs?uga bazy obiektowej (triggery, procedury, obs?uga b??d?w i inne)
      ************************************************************/
      
 CREATE OR REPLACE TRIGGER trg_check_randka_self
@@ -429,7 +434,7 @@ BEGIN
 
     IF v_id1 = v_id2 THEN
         RAISE_APPLICATION_ERROR(-20001,
-            'Ten sam klient nie może być klientem1 i klientem2!');
+            'Ten sam klient nie mo?e by? klientem1 i klientem2!');
     END IF;
 END;
 /
@@ -439,7 +444,7 @@ BEFORE INSERT OR UPDATE ON KlienciObjTable
 FOR EACH ROW
 BEGIN
     IF :NEW.data_urodzenia > SYSDATE THEN
-        RAISE_APPLICATION_ERROR(-20002, 'Data urodzenia nie może być w przyszłości!');
+        RAISE_APPLICATION_ERROR(-20002, 'Data urodzenia nie mo?e by? w przysz?o?ci!');
     END IF;
 END;
 /
@@ -475,7 +480,7 @@ BEGIN
         VALUES (
             'KlienciObjTable',
             'DELETE',
-            'Usunięto rekord o ID: ' || :OLD.osoba_id
+            'Usuni?to rekord o ID: ' || :OLD.osoba_id
         );
     END IF;
 END;
@@ -500,7 +505,7 @@ BEGIN
 END;
 /
     /************************************************************
-      Wypełnianie tabel danymi oraz testowanie przyjętych założeń
+      Wype?nianie tabel danymi oraz testowanie przyj?tych za?o?e?
      ************************************************************/
 
 BEGIN
@@ -509,7 +514,7 @@ BEGIN
         p_imie           => 'Jan',
         p_nazwisko       => 'Kowalski',
         p_data_ur        => DATE '1990-01-01',
-        p_ulica          => 'Główna',
+        p_ulica          => 'G??wna',
         p_nr_domu        => '10',
         p_nr_mieszkania  => NULL,
         p_kod_pocztowy   => '00-001',
@@ -527,7 +532,7 @@ BEGIN
         p_nr_domu        => '5',
         p_nr_mieszkania  => '12',
         p_kod_pocztowy   => '00-002',
-        p_miasto         => 'Kraków',
+        p_miasto         => 'Krak?w',
         p_status         => 'premium',
         p_preferencje    => 'muzyka, taniec'
     );
@@ -554,12 +559,12 @@ END;
 /
 
 BEGIN
-    -- Próba dodania klienta z przyszłą datą urodzenia (powinien zostać zgłoszony ERROR)
+    -- Pr?ba dodania klienta z przysz?? dat? urodzenia (powinien zosta? zg?oszony ERROR)
     PakietBiuro.dodaj_klienta(
         p_osoba_id       => 3,
-        p_imie           => 'Przyszły',
+        p_imie           => 'Przysz?y',
         p_nazwisko       => 'Klient',
-        p_data_ur        => SYSDATE + 1,  -- Data w przyszłości!
+        p_data_ur        => SYSDATE + 1,  -- Data w przysz?o?ci!
         p_ulica          => 'Fikcyjna',
         p_nr_domu        => '1',
         p_nr_mieszkania  => NULL,
@@ -572,10 +577,10 @@ END;
 /
 
 BEGIN
-    -- Wyświetlenie danych istniejącego klienta
+    -- Wy?wietlenie danych istniej?cego klienta
     PakietBiuro.wyswietl_klienta(p_osoba_id => 1);
 
-    -- Próba wyświetlenia nieistniejącego klienta
+    -- Pr?ba wy?wietlenia nieistniej?cego klienta
     PakietBiuro.wyswietl_klienta(p_osoba_id => 999);
 END;
 /
@@ -587,11 +592,11 @@ BEGIN
         p_nazwisko   => 'Opiekun'
     );
 
-    -- Przypisanie klientów do opiekuna
+    -- Przypisanie klient?w do opiekuna
     PakietBiuro.dodaj_klienta_do_opiekuna(p_opiekun_id => 2, p_osoba_id => 1);
     PakietBiuro.dodaj_klienta_do_opiekuna(p_opiekun_id => 2, p_osoba_id => 2);
 
-    -- Próba przypisania nieistniejącego klienta
+    -- Pr?ba przypisania nieistniej?cego klienta
     PakietBiuro.dodaj_klienta_do_opiekuna(p_opiekun_id => 2, p_osoba_id => 999);
 END;
 /
@@ -605,7 +610,7 @@ BEGIN
         p_klient2_id     => 2
     );
 
-    -- Próba dodania randki z tym samym klientem (powinien zostać zgłoszony ERROR)
+    -- Pr?ba dodania randki z tym samym klientem (powinien zosta? zg?oszony ERROR)
     PakietBiuro.dodaj_randke(
         p_randka_id      => 2,
         p_data_spotkania => SYSDATE + 1,
@@ -677,11 +682,9 @@ SELECT * FROM LogOperacji;
 
 --  Administrator (dowolne uprawnienia)
 CREATE ROLE Administrator;
-
 GRANT ALL ON KlienciObjTable TO Administrator;
 GRANT ALL ON RandkiObjTable TO Administrator;
 GRANT ALL ON OpiekunowieObjTable TO Administrator;
-GRANT ALL ON podopieczni_storage TO Administrator;
 GRANT ALL ON LogOperacji TO Administrator;
 GRANT EXECUTE ON PakietBiuro TO Administrator;
 
@@ -691,19 +694,20 @@ GRANT CREATE USER TO Administrator;
 GRANT DROP USER TO Administrator;
 GRANT GRANT ANY PRIVILEGE TO Administrator;
 
---Employee (Brak możliwości usuwania danych i modyfikowania struktur bazy)
+--Employee (Brak mo?liwo?ci usuwania danych i modyfikowania struktur bazy)
 CREATE ROLE Employee;
-
 
 GRANT SELECT, INSERT, UPDATE ON KlienciObjTable TO Employee;
 GRANT SELECT, INSERT ON RandkiObjTable TO Employee;
 GRANT SELECT ON OpiekunowieObjTable TO Employee;
 GRANT EXECUTE ON PakietBiuro TO Employee;
 
--- Tworzenie użytkownika admin i emp
+-- Tworzenie u?ytkownika admin i emp
 CREATE USER admin IDENTIFIED BY admin_password;
 GRANT Administrator TO admin;
 
-CREATE USER employee IDENTIFIED BY employee_password;
-GRANT Employee TO employee;
+CREATE USER employee_user IDENTIFIED BY employee_password;
+GRANT Employee TO employee_user;
+
+-- SELECT ROLE FROM DBA_ROLES WHERE ROLE IN ('ADMINISTRATOR', 'EMPLOYEE');
 
