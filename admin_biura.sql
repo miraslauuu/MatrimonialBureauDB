@@ -1254,17 +1254,6 @@ BEGIN
 END;
 /
 
--- Trigger sprawdzający datę urodzenia (nie może być w przyszłości)
-CREATE OR REPLACE TRIGGER trg_check_data_urodzenia
-BEFORE INSERT OR UPDATE ON KlienciObjTable
-FOR EACH ROW
-BEGIN
-    IF :NEW.data_urodzenia > SYSDATE THEN
-        RAISE_APPLICATION_ERROR(-20002, 'Data urodzenia nie może być w przyszłości!');
-    END IF;
-END;
-/
-
 
 -- Tabela do logowania operacji
 CREATE TABLE LogOperacji (
