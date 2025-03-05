@@ -1,7 +1,7 @@
 # Matrimonial Bureau Database (MatrimonialBureauDB)
 
 **Authors:**  
-Miraslau Alkhovik (248655) - database code 
+Miraslau Alkhovik (248655) - database code </br>
 Praskouya Horbach (248656) - documentation
 
 ## Project Overview
